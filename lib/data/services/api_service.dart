@@ -8,21 +8,28 @@ class ApiService {
   final String apiKey = dotenv.env['API_KEY'] ?? '';
 
   Future<List<Match>> getLiveMatches() async {
-    final response = await http.get(
-      Uri.parse('$baseUrl/matches'),
-      headers: {
-        "X-Auth-Token": apiKey,
-      },
-    );
+    final url = Uri.parse('$baseUrl/fixtures?live=all');
+    try {
+      final response = await http.get(
+        url,
+        headers: {
+          'x-apisports-key': apiKey,
+        },
+      );
 
-    if (response.statusCode == 200) {
-      final data = json.decode(response.body);
-      final matches = (data['matches'] as List)
-          .map((m) => Match.fromJson(m))
-          .toList();
-      return matches;
-    } else {
-      throw Exception("Failed to load matches");
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        final matches = (data['response'] as List)
+            .map((json) => Match.fromJson(json))
+            .toList();
+        return matches;
+      } else {
+        throw Exception(
+            "Failed to fetch live matches: ${response.statusCode} ${response
+                .body}");
+      }
+    } catch (e) {
+      throw Exception("Network error: $e");
     }
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import '../../../state/match/match_provider.dart';
 import '../../../data/models/match.dart';
 
@@ -11,7 +12,7 @@ class HomeScreen extends ConsumerWidget {
     final liveMatches = ref.watch(liveMatchesProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text("Live Scores")),
+      appBar: AppBar(title: const Text('Live Scores')),
       body: liveMatches.when(
         data: (matches) => ListView.builder(
           itemCount: matches.length,
@@ -22,8 +23,14 @@ class HomeScreen extends ConsumerWidget {
               subtitle: Text(
                 match.isLive
                     ? "Live: ${match.homeScore} - ${match.awayScore}"
-                    : "Starts at ${match.startTime.hour}:${match.startTime.minute}",
+                    : "Starts at ${match.startTime.hour.toString().padLeft(2,'0')}:${match.startTime.minute.toString().padLeft(2,'0')}",
               ),
+              onTap: () {
+                context.goNamed(
+                  'matchDetail',
+                  extra: matches[index],
+                );
+              },
             );
           },
         ),
