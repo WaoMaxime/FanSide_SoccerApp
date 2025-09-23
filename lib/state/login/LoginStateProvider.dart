@@ -1,12 +1,25 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../data/repositories/AuthRepository.dart';
 import 'LoginStateNotifier.dart';
 import 'LoginState.dart';
-import '../../data/services/api_service.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-final apiServiceProvider = Provider<ApiService>((ref) => ApiService());
+
+final firebaseAuthProvider = Provider<FirebaseAuth>((ref) {
+  return FirebaseAuth.instance;
+});
+
+final firebaseFirestoreProvider = Provider<FirebaseFirestore>((ref) => FirebaseFirestore.instance);
+
+final authRepositoryProvider = Provider<AuthRepository>((ref) {
+  final auth = ref.read(firebaseAuthProvider);
+  final firestore = ref.read(firebaseFirestoreProvider);
+  return AuthRepository(auth, firestore);
+});
 
 final loginProvider =
-StateNotifierProvider<LoginNotifier, LoginState>((ref) {
-  final apiService = ref.read(apiServiceProvider);
-  return LoginNotifier(apiService: apiService);
+StateNotifierProvider<LoginStateNotifier, LoginState>((ref) {
+  final authRepository = ref.read(authRepositoryProvider);
+  return LoginStateNotifier(authRepository);
 });
