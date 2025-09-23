@@ -28,6 +28,10 @@ class LoginStateNotifier extends StateNotifier<LoginState> {
     }
   }
 
+  void reset() {
+    state = LoginState.initial();
+  }
+
   Future<void> logout() async {
     await _authRepository.signOut();
   }

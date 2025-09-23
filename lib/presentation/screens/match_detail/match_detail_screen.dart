@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import '../../../data/models/match.dart';
+import 'package:intl/intl.dart';
+import 'package:animated_digit/animated_digit.dart';
 
 class MatchDetailScreen extends StatelessWidget {
   final Match match;
@@ -8,6 +11,8 @@ class MatchDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final startTimeFormatted = DateFormat('dd MMM yyyy, HH:mm').format(match.startTime);
+
     return Scaffold(
       appBar: AppBar(title: Text("${match.homeTeam} vs ${match.awayTeam}")),
       body: SingleChildScrollView(
@@ -33,30 +38,59 @@ class MatchDetailScreen extends StatelessWidget {
               children: [
                 Column(
                   children: [
-                    const Icon(Icons.sports_soccer, size: 48),
+                    CachedNetworkImage(
+                      imageUrl: match.homeLogo,
+                      width: 60,
+                      height: 60,
+                      placeholder: (_, __) => const CircleAvatar(radius: 30, backgroundColor: Colors.grey),
+                      errorWidget: (_, __, ___) => const CircleAvatar(radius: 30, backgroundColor: Colors.grey),
+                    ),
                     const SizedBox(height: 8),
-                    Text(match.homeTeam, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                    Text(match.homeTeam,
+                        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                   ],
                 ),
-                Text(
-                  "${match.homeScore} - ${match.awayScore}",
-                  style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                AnimatedDigitWidget(
+                  value: match.homeScore,
+                  textStyle: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+                  duration: const Duration(milliseconds: 500),
+                ),
+                const Text("-", style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold)),
+                AnimatedDigitWidget(
+                  value: match.awayScore,
+                  textStyle: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+                  duration: const Duration(milliseconds: 500),
                 ),
                 Column(
                   children: [
-                    const Icon(Icons.sports_soccer, size: 48),
+                    CachedNetworkImage(
+                      imageUrl: match.awayLogo,
+                      width: 60,
+                      height: 60,
+                      placeholder: (_, __) => const CircleAvatar(radius: 30, backgroundColor: Colors.grey),
+                      errorWidget: (_, __, ___) => const CircleAvatar(radius: 30, backgroundColor: Colors.grey),
+                    ),
                     const SizedBox(height: 8),
-                    Text(match.awayTeam, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                    Text(match.awayTeam,
+                        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                   ],
                 ),
               ],
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: 16),
 
-            Text(
-              "Start Time: ${match.startTime.day.toString().padLeft(2,'0')}-${match.startTime.month.toString().padLeft(2,'0')}-${match.startTime.year} ${match.startTime.hour.toString().padLeft(2,'0')}:${match.startTime.minute.toString().padLeft(2,'0')}",
-              style: const TextStyle(fontSize: 16),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                if (match.leagueLogo.isNotEmpty)
+                  Image.network(match.leagueLogo, width: 24, height: 24),
+                const SizedBox(width: 8),
+                Text(match.leagueName, style: const TextStyle(fontSize: 16)),
+              ],
             ),
+            const SizedBox(height: 16),
+
+            Text("Kick-off: $startTimeFormatted", style: const TextStyle(fontSize: 16)),
             const SizedBox(height: 24),
 
             Card(
@@ -64,13 +98,27 @@ class MatchDetailScreen extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.all(16),
                 child: Column(
-                  children: const [
-                    Text("Match Stats", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                    SizedBox(height: 12),
-                    Text("Possession: Home 55% - Away 45%"),
-                    Text("Shots on Target: Home 5 - Away 3"),
-                    Text("Corners: Home 4 - Away 2"),
-                    Text("Yellow Cards: Home 1 - Away 2"),
+                  children: [
+                    const Text("Score Breakdown",
+                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                    const SizedBox(height: 12),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Column(
+                          children: [
+                            const Text("Halftime"),
+                            Text("${match.homeScore} - ${match.awayScore}"),
+                          ],
+                        ),
+                        Column(
+                          children: [
+                            const Text("Fulltime"),
+                            Text("${match.homeScore} - ${match.awayScore}"),
+                          ],
+                        ),
+                      ],
+                    ),
                   ],
                 ),
               ),

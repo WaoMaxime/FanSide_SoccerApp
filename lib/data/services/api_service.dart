@@ -19,14 +19,14 @@ class ApiService {
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
-        final matches = (data['response'] as List)
-            .map((json) => Match.fromJson(json))
+        final List<Match> matches = (data['response'] as List)
+            .map((json) => Match.fromApi(json))
             .toList();
+
         return matches;
       } else {
         throw Exception(
-            "Failed to fetch live matches: ${response.statusCode} ${response
-                .body}");
+            "Failed to fetch live matches: ${response.statusCode} ${response.body}");
       }
     } catch (e) {
       throw Exception("Network error: $e");

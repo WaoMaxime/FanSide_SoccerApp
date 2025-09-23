@@ -70,14 +70,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           decoration: InputDecoration(
                             labelText: "Email",
                             prefixIcon: const Icon(
-                                Icons.email, color: Colors.blue),
+                                Icons.email, color: Colors.lightGreen),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
                               borderSide:
-                              const BorderSide(color: Colors.blue, width: 2),
+                              const BorderSide(color: Colors.lightGreen, width: 2),
                             ),
                             filled: true,
                             fillColor: Colors.grey[100],
@@ -100,14 +100,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           decoration: InputDecoration(
                             labelText: "Password",
                             prefixIcon: const Icon(
-                                Icons.lock, color: Colors.blue),
+                                Icons.lock, color: Colors.lightGreen),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
                               borderSide:
-                              const BorderSide(color: Colors.blue, width: 2),
+                              const BorderSide(color: Colors.lightGreen, width: 2),
                             ),
                             filled: true,
                             fillColor: Colors.grey[100],
@@ -122,7 +122,30 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             return null;
                           },
                         ),
-                        const SizedBox(height: 24),
+                        const SizedBox(height: 16),
+                        if (loginState.error != null)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 8),
+                            child: Center(
+                              child: Text(
+                                loginState.error!,
+                                style: const TextStyle(
+                                    color: Colors.red, fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                          ),
+                        const SizedBox(height: 2),
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: TextButton(
+                            onPressed: () => context.goNamed('forgotPassword'),
+                            child: const Text(
+                              "Forgot Password?",
+                              style: TextStyle(color: Colors.black38, fontSize: 13),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 2),
                         SizedBox(
                           width: double.infinity,
                           height: 50,
@@ -137,15 +160,32 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                 );
                               }
                             },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.lightGreen
+                            ),
                             child: loginState.isLoading
                                 ? const CircularProgressIndicator(
                                 color: Colors.white)
-                                : const Text("Login"),
+                                : Text("Login",
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18,
+                                color: Colors.black,
+                                )),
+                            ),
                           ),
-                        ),
+                        const SizedBox(height: 4),
                         TextButton(
-                          onPressed: () => context.goNamed('signup'),
-                          child: const Text("Don't have an account? Sign Up"),
+                          onPressed: () => {
+                            ref.read(loginProvider.notifier).reset(),
+                            context.goNamed('signup')
+                          },
+                          child: const Text("I don't have an account",
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 16
+                          ),
+                          ),
                         ),
                       ],
                     ),
