@@ -11,6 +11,8 @@
 
 
 # Flutter repo-specific
+/android/app/google-services.json
+/ios/GoogleService-Info.plist
 /bin/cache/
 /bin/internal/bootstrap.bat
 /bin/internal/bootstrap.sh
