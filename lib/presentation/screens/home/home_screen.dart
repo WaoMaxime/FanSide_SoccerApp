@@ -77,93 +77,119 @@ class MatchCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final timeFormatted =
-    DateFormat('HH:mm, dd MMM').format(match.startTime);
+    final timeFormatted = DateFormat('HH:mm, dd MMM').format(match.startTime);
 
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 6),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      color: Color(0xC51379CE),
       elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       child: InkWell(
+        borderRadius: BorderRadius.circular(12),
         onTap: () => context.goNamed('matchDetail', extra: match),
-        borderRadius: BorderRadius.circular(10),
         child: Padding(
           padding: const EdgeInsets.all(12),
-          child: Row(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // Team logos
-              Column(
-                children: [
-                  CachedNetworkImage(
-                    imageUrl: match.homeLogo,
-                    width: 40,
-                    height: 40,
-                    placeholder: (_, __) => const CircleAvatar(radius: 20, backgroundColor: Colors.grey),
-                    errorWidget: (_, __, ___) => const CircleAvatar(radius: 20, backgroundColor: Colors.grey),
-                  ),
-                  CachedNetworkImage(
-                    imageUrl: match.awayLogo,
-                    width: 40,
-                    height: 40,
-                    placeholder: (_, __) => const CircleAvatar(radius: 20, backgroundColor: Colors.grey),
-                    errorWidget: (_, __, ___) => const CircleAvatar(radius: 20, backgroundColor: Colors.grey),
-                  ),
-                ],
-              ),
               Row(
                 children: [
-                  Image.network(match.leagueLogo, width: 24, height: 24),
-                  const SizedBox(width: 8),
-                  Text(match.leagueName),
+                  CachedNetworkImage(
+                    imageUrl: match.leagueLogo,
+                    width: 20,
+                    height: 20,
+                    errorWidget: (_, __, ___) => const Icon(Icons.sports_soccer, size: 20),
+                  ),
+                  const SizedBox(width: 6),
+                  Expanded(
+                    child: Text(
+                      match.leagueName,
+                      style: const TextStyle(fontWeight: FontWeight.w500),
+                    ),
+                  ),
+                  Text(
+                    timeFormatted,
+                    style: const TextStyle(color: Colors.black, fontSize: 12),
+                  ),
                 ],
               ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text("${match.homeTeam} vs ${match.awayTeam}",
-                        style: const TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 16)),
-                    const SizedBox(height: 4),
-                    match.isLive
-                        ? Row(
+              const SizedBox(height: 12),
+
+              Row(
+                children: [
+                  Expanded(
+                    child: Column(
                       children: [
+                        CachedNetworkImage(
+                          imageUrl: match.homeLogo,
+                          width: 40,
+                          height: 40,
+                          placeholder: (_, __) => const CircleAvatar(radius: 20, backgroundColor: Colors.grey),
+                          errorWidget: (_, __, ___) => const CircleAvatar(radius: 20, backgroundColor: Colors.grey),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          match.homeTeam,
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(fontWeight: FontWeight.w600),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  Column(
+                    children: [
+                      if (match.isLive)
                         Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 6, vertical: 2),
+                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                           decoration: BoxDecoration(
                             color: Colors.redAccent,
                             borderRadius: BorderRadius.circular(4),
                           ),
-                          child: const Text(
-                            "LIVE",
-                            style: TextStyle(
-                                color: Colors.white, fontSize: 12),
+                          child: const Text("LIVE", style: TextStyle(color: Colors.white, fontSize: 12)),
+                        )
+                      else
+                        Text("Upcoming", style: const TextStyle(color: Colors.grey, fontSize: 12)),
+                      const SizedBox(height: 6),
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          AnimatedDigitWidget(
+                            value: match.homeScore,
+                            textStyle: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                           ),
+                          const SizedBox(width: 6),
+                          const Text("-", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                          const SizedBox(width: 6),
+                          AnimatedDigitWidget(
+                            value: match.awayScore,
+                            textStyle: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+
+                  Expanded(
+                    child: Column(
+                      children: [
+                        CachedNetworkImage(
+                          imageUrl: match.awayLogo,
+                          width: 40,
+                          height: 40,
+                          placeholder: (_, __) => const CircleAvatar(radius: 20, backgroundColor: Colors.grey),
+                          errorWidget: (_, __, ___) => const CircleAvatar(radius: 20, backgroundColor: Colors.grey),
                         ),
-                        const SizedBox(width: 8),
-                        AnimatedDigitWidget(
-                          value: match.homeScore,
-                          textStyle: const TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.bold),
-                          duration: const Duration(milliseconds: 500),
-                        ),
-                        const Text(" - ",
-                            style: TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.bold)),
-                        AnimatedDigitWidget(
-                          value: match.awayScore,
-                          textStyle: const TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.bold),
-                          duration: const Duration(milliseconds: 500),
+                        const SizedBox(height: 4),
+                        Text(
+                          match.awayTeam,
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(fontWeight: FontWeight.w600),
                         ),
                       ],
-                    )
-                        : Text("Starts at $timeFormatted",
-                        style: const TextStyle(color: Colors.grey)),
-                  ],
-                ),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
@@ -172,3 +198,4 @@ class MatchCard extends StatelessWidget {
     );
   }
 }
+
