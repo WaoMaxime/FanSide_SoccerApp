@@ -1,3 +1,4 @@
+import 'package:fanside_app/presentation/screens/proflie/profile.dart';
 import 'package:go_router/go_router.dart';
 import '../presentation/screens/login/SignUpScreen.dart';
 import '../presentation/screens/login/login_screen.dart';
@@ -38,6 +39,11 @@ final GoRouter appRouter = GoRouter(
             final match = state.extra as Match;
             return MatchDetailScreen(match: match);
           },
+        ),
+        GoRoute(
+          path: 'profile',
+          name: 'profile',
+          builder: (context, state) => const ProfilePage(),
         ),
       ],
     ),
